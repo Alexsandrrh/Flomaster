@@ -9,62 +9,59 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            appName: '[K]niga',
-            heroes: [
-                {
-                    name: 'Олег',
-                    img: 'https://vk.com/sticker/1-167-64-9-v1'
-                },
-                {
-                    name: 'Федор',
-                    img: 'https://vk.com/sticker/1-133-64-9'
-                },
-                {
-                    name: 'Клубника',
-                    img: 'https://vk.com/sticker/1-147-64-9'
-                },
-                {
-                    name: 'Лимон',
-                    img: 'https://vk.com/sticker/1-162-64-9-v1'
-                },
-                {
-                    name: 'Дима',
-                    img: 'https://vk.com/sticker/1-163-64-9'
-                }
-            ],
-            isOpenModal : false
+            appName: 'Flomaster',
+            photos: [],
+            isOpenModal: false
         };
     }
 
-    openModal () {
-        this.setState({isOpenModal: true});
+    getDataPhotos() {
+        fetch('http://jsonplaceholder.typicode.com/photos')
+            .then(res => res.json())
+            .then(photos => this.setState({ photos: photos }))
+            .catch(err => console.error(err));
     }
 
-    closeModal () {
-        this.setState({isOpenModal: false});
+    componentDidMount() {
+        this.getDataPhotos();
+    }
+
+    openModal() {
+        this.setState({ isOpenModal: true });
+    }
+
+    closeModal() {
+        this.setState({ isOpenModal: false });
     }
 
     render() {
+        const { appName, isOpenModal, photos } = this.state;
+
         return (
             <>
-                <Navbar appName={this.state.appName} isOpen={this.state.isOpenModal} onOpen={this.openModal.bind(this)} />
+                <Navbar
+                    appName={appName}
+                    isOpen={isOpenModal}
+                    onOpen={this.openModal.bind(this)}
+                />
 
-                <Modal isOpen={this.state.isOpenModal} onClose={this.closeModal.bind(this)}>
-                    <h1>Hello world!</h1>
+                <Modal
+                    isOpen={isOpenModal}
+                    onClose={this.closeModal.bind(this)}
+                >
+                    <h1 className='modal-h1'>We like Justin Bieber</h1>
                 </Modal>
 
                 <Switch>
                     <Route exact path='/' component={HomePage} />
                     <Route
                         path='/HeroList'
-                        render={() => <HeroList heroes={this.state.heroes} />}
+                        render={() => <HeroList photos={photos} />}
                     />
                 </Switch>
             </>
         );
     }
-
-
 }
 
 export default App;
